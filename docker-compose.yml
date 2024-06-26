@@ -1,0 +1,34 @@
+version: "3.2"
+services:
+  postgres:
+    image: "crunchydata/crunchy-postgres:centos8-13.6-4.7.5"
+    env_file:
+    - ".env"
+    environment:
+    - "MODE=postgres"
+    - "PG_DATABASE=postgres"
+    - "PG_PRIMARY_PORT=5432"
+    - "PG_MODE=primary"
+    - "PG_USER=postgres"
+    - "PG_PASSWORD=${DEV_DB_PASSWORD}"
+    - "PG_PRIMARY_USER=primary"
+    - "PG_PRIMARY_PASSWORD=${DEV_DB_PRIMARY_PASSWORD}"
+    - "PG_ROOT_PASSWORD=${DEV_DB_ROOT_PASSWORD}"
+    - "PGDATA_PATH_OVERRIDE=postgres"
+    volumes:
+    - "postgres:/pgdata"
+    ports:
+    - "5433:5432"
+    networks:
+    - crunchynet
+    deploy:
+      placement:
+        constraints:
+        - node.labels.type == primary
+        - node.role == worker
+
+networks:
+  crunchynet:
+
+volumes:
+  postgres:
