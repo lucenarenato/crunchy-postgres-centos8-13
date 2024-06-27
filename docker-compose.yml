@@ -27,6 +27,25 @@ services:
         - node.labels.type == primary
         - node.role == worker
 
+  mailhog:
+        image: 'mailhog/mailhog:latest'
+        container_name: 'Mail'
+        logging:
+            driver: 'none'  # disable saving logs
+        environment:
+            MH_AUTH_FILE: /mailhog.auth
+            MH_MAILDIR_PATH: /data
+            MH_STORAGE: maildir
+        volumes:
+            - ./mailhog.auth:/mailhog.auth:ro
+            - ./data:/data:rw
+        ports:
+            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - crunchynet
+
+
 networks:
   crunchynet:
 
